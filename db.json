@@ -1,0 +1,264 @@
+{
+  "tenants": [
+    {
+      "id": "ten_demo",
+      "name": "CA.RO Connect Demo",
+      "slug": "caro-connect-demo",
+      "plan": "pro",
+      "status": "active",
+      "owner_email": "demo@caroconnect.com",
+      "createdAt": "2026-07-06T13:55:40.123Z",
+      "businessSegment": "E-Commerce de Moda",
+      "businessDescription": "Marca premium de roupas sustentáveis e calçados ecológicos fabricados no Brasil."
+    },
+    {
+      "id": "ten_w8frutgg6",
+      "name": "Google User Demo",
+      "slug": "google-user-demo",
+      "plan": "pro",
+      "status": "active",
+      "owner_email": "google.user@caroconnect.eco",
+      "createdAt": "2026-07-06T13:55:40.124Z",
+      "businessSegment": "Clínicas e Consultórios Médicos",
+      "businessDescription": "Clinica de estética - com foco em tricologia"
+    }
+  ],
+  "users": [
+    {
+      "id": "usr_demo",
+      "email": "demo@caroconnect.com",
+      "name": "Rony Silva",
+      "password": "demo",
+      "tenantId": "ten_demo"
+    },
+    {
+      "id": "usr_umzzihnz9",
+      "email": "google.user@caroconnect.eco",
+      "name": "Google User Demo",
+      "password": "oauth_simulated_password",
+      "tenantId": "ten_w8frutgg6"
+    }
+  ],
+  "channels": [
+    {
+      "id": "ch_wa_1",
+      "tenantId": "ten_demo",
+      "type": "whatsapp_meta",
+      "identifier": "+55 (11) 99888-7766",
+      "status": "connected"
+    },
+    {
+      "id": "ch_ig_1",
+      "tenantId": "ten_demo",
+      "type": "instagram",
+      "identifier": "@caroconnect.eco",
+      "status": "connected"
+    },
+    {
+      "id": "ch_85m8zge5y",
+      "tenantId": "ten_w8frutgg6",
+      "type": "whatsapp_meta",
+      "identifier": "11942302344",
+      "status": "connected"
+    },
+    {
+      "id": "ch_hqv6k94s6",
+      "tenantId": "ten_w8frutgg6",
+      "type": "instagram",
+      "identifier": "@efeef",
+      "status": "connected"
+    }
+  ],
+  "agentConfigs": [
+    {
+      "id": "ag_1",
+      "tenantId": "ten_demo",
+      "agentName": "CA.RO a Assistente Virtual",
+      "aiEnabled": true,
+      "systemPrompt": "Você é a CA.RO, assistente inteligente da CA.RO Connect. Seja muito simpática, solícita e use emojis amigáveis 🌿✨. Responda às perguntas dos clientes de forma concisa e objetiva. Nós vendemos roupas de algodão orgânico e calçados ecológicos de alta durabilidade. Nossos prazos de entrega para todo o Brasil variam de 3 a 7 dias úteis. Oferecemos 10% de desconto na primeira compra usando o cupom BEMVINDO10. Caso não saiba alguma informação específica, diga que vai verificar com o atendimento humano e peça o contato de e-mail deles.",
+      "knowledgeBase": "Cupom BEMVINDO10 fornece 10% de desconto. Entrega de 3 a 7 dias. Roupas sustentáveis."
+    },
+    {
+      "id": "ag_0gp5npsxx",
+      "tenantId": "ten_w8frutgg6",
+      "agentName": "CA.RO a Assistente Virtual",
+      "aiEnabled": true,
+      "systemPrompt": "Você é a assistente virtual inteligente da Google User Demo. Nós atuamos no segmento de Clínicas e Consultórios Médicos.\n\nSobre nosso negócio:\nClinica de estética - com foco em tricologia\n\nSeja atenciosa, prestativa e procure ajudar o cliente a sanar dúvidas e fechar compras! Use emojis amigáveis ✨🌿."
+    }
+  ],
+  "knowledgeDocs": [
+    {
+      "id": "doc_1",
+      "tenantId": "ten_demo",
+      "filename": "politica_de_trocas_e_devolucoes.pdf",
+      "content": "Nossa política de trocas e devoluções aceita solicitações em até 30 dias após o recebimento do produto. O item deve estar na embalagem original, sem sinais de uso, e com a etiqueta fixada. A primeira troca tem frete grátis por nossa conta. Para dar entrada, envie uma mensagem pelo e-mail trocas@caroconnect.eco ou solicite diretamente ao nosso suporte.",
+      "sizeBytes": 15420,
+      "createdAt": "2026-07-03T13:55:40.123Z"
+    },
+    {
+      "id": "doc_2",
+      "tenantId": "ten_demo",
+      "filename": "catalogo_e_valores_2026.pdf",
+      "content": "Camiseta Clássica Algodão Orgânico: R$ 89,90. Calça Jeans Ecológica Reciclada: R$ 189,90. Tênis de Fibra de Bambu: R$ 249,90. Jaqueta Corta-Vento sustentável: R$ 219,90. Cores disponíveis: Areia, Verde Musgo, Terracota, Branco e Preto. Aceitamos pagamentos via PIX (com 5% de desconto), Boleto e Cartão de Crédito em até 6x sem juros.",
+      "sizeBytes": 32048,
+      "createdAt": "2026-07-05T13:55:40.123Z"
+    }
+  ],
+  "conversations": [
+    {
+      "id": "conv_wa_1",
+      "tenantId": "ten_demo",
+      "channel": "whatsapp_meta",
+      "status": "open",
+      "lead_id": "Mariana Costa",
+      "createdAt": "2026-07-06T11:55:40.123Z",
+      "updatedAt": "2026-07-06T13:50:40.123Z"
+    },
+    {
+      "id": "conv_wa_2",
+      "tenantId": "ten_demo",
+      "channel": "whatsapp_meta",
+      "status": "open",
+      "lead_id": "Carlos Eduardo (Dúvida sobre Cupom)",
+      "createdAt": "2026-07-06T08:55:40.123Z",
+      "updatedAt": "2026-07-06T11:55:40.123Z"
+    },
+    {
+      "id": "conv_ig_1",
+      "tenantId": "ten_demo",
+      "channel": "instagram",
+      "status": "open",
+      "lead_id": "gabriela_mendes",
+      "createdAt": "2026-07-06T12:55:40.123Z",
+      "updatedAt": "2026-07-06T13:35:40.123Z"
+    },
+    {
+      "id": "conv_qithehlid",
+      "tenantId": "ten_w8frutgg6",
+      "channel": "instagram",
+      "status": "open",
+      "lead_id": "Roni Silva ",
+      "createdAt": "2026-07-06T14:56:49.516Z",
+      "updatedAt": "2026-07-06T14:57:09.340Z",
+      "phone": "@ronysiilvaa",
+      "email": "roni.silva@gmail.com",
+      "location": "São Paulo, SP",
+      "status_tag": "Interesse Geral ✨",
+      "avatarUrl": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150",
+      "notes": "Cliente simulado entrando em contato pelo Instagram Direct."
+    },
+    {
+      "id": "conv_sssik7len",
+      "tenantId": "ten_w8frutgg6",
+      "channel": "whatsapp_meta",
+      "status": "open",
+      "lead_id": "Roni ",
+      "phone": "+55 (11) 961631278",
+      "email": "roni.@exemplo.com",
+      "location": "São Paulo, SP",
+      "status_tag": "Novo Lead 🆕",
+      "avatarUrl": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150",
+      "notes": "Enviado através do simulador integrado.",
+      "createdAt": "2026-07-06T15:02:25.749Z",
+      "updatedAt": "2026-07-06T15:02:41.731Z"
+    }
+  ],
+  "messages": [
+    {
+      "id": "msg_1",
+      "convId": "conv_wa_1",
+      "tenantId": "ten_demo",
+      "role": "user",
+      "content": "Olá! Gostaria de saber qual o prazo de entrega de vocês para Minas Gerais?",
+      "createdAt": "2026-07-06T11:55:40.123Z"
+    },
+    {
+      "id": "msg_2",
+      "convId": "conv_wa_1",
+      "tenantId": "ten_demo",
+      "role": "assistant",
+      "content": "Olá, Mariana! ✨ Tudo bem? Nosso prazo de entrega para Minas Gerais (e qualquer região do Brasil) varia entre 3 a 7 dias úteis após a confirmação do pagamento! 🚚 Se precisar de ajuda para calcular com seu CEP específico, é só me passar!",
+      "createdAt": "2026-07-06T11:56:10.123Z"
+    },
+    {
+      "id": "msg_3",
+      "convId": "conv_wa_1",
+      "tenantId": "ten_demo",
+      "role": "user",
+      "content": "Ah, ótimo! E tem algum cupom de desconto para novos compradores?",
+      "createdAt": "2026-07-06T13:50:40.123Z"
+    },
+    {
+      "id": "msg_4",
+      "convId": "conv_wa_1",
+      "tenantId": "ten_demo",
+      "role": "assistant",
+      "content": "Temos sim! 🎉 Você pode aproveitar 10% de desconto na sua primeira compra utilizando o cupom BEMVINDO10 no fechamento do seu pedido! 🌿 Se precisar de ajuda com os tamanhos ou modelos, estou aqui!",
+      "createdAt": "2026-07-06T13:50:55.123Z"
+    },
+    {
+      "id": "msg_5",
+      "convId": "conv_wa_2",
+      "tenantId": "ten_demo",
+      "role": "user",
+      "content": "Bom dia, o cupom BEMVINDO10 não está aplicando no tênis. Vocês dão desconto no PIX?",
+      "createdAt": "2026-07-06T08:55:40.123Z"
+    },
+    {
+      "id": "msg_6",
+      "convId": "conv_wa_2",
+      "tenantId": "ten_demo",
+      "role": "assistant",
+      "content": "Bom dia, Carlos! 🌿 Pedimos desculpas pelo transtorno. O cupom deveria funcionar em todo o site. De qualquer forma, nós oferecemos sim 5% de desconto automático para pagamentos via PIX! Esse desconto já acumula no carrinho se você selecionar essa opção de pagamento. 💚 Quer que eu verifique se o modelo do tênis está com algum bloqueio?",
+      "createdAt": "2026-07-06T08:56:25.123Z"
+    },
+    {
+      "id": "msg_7",
+      "convId": "conv_ig_1",
+      "tenantId": "ten_demo",
+      "role": "user",
+      "content": "Oi! Vi a foto da camiseta musgo no feed de vcs. Como funciona para trocar caso fique pequena?",
+      "createdAt": "2026-07-06T12:55:40.123Z"
+    },
+    {
+      "id": "msg_8",
+      "convId": "conv_ig_1",
+      "tenantId": "ten_demo",
+      "role": "assistant",
+      "content": "Oi, Gabi! 😍 Que bom que gostou da nossa camiseta Verde Musgo! Ela é feita de algodão 100% orgânico e tem um toque incrível. Sobre trocas, fique super tranquila: se não servir, você pode solicitar a troca em até 30 dias após receber! O produto precisa estar com etiqueta e sem uso. Ah, e a primeira troca tem o frete de devolução grátis por nossa conta! 🌿🛍️",
+      "createdAt": "2026-07-06T12:56:00.123Z"
+    },
+    {
+      "id": "msg_zhav22r9u",
+      "convId": "conv_qithehlid",
+      "tenantId": "ten_w8frutgg6",
+      "role": "user",
+      "content": "Oii, tudo bem ?",
+      "createdAt": "2026-07-06T14:56:49.674Z"
+    },
+    {
+      "id": "msg_5fm30hu6l",
+      "convId": "conv_qithehlid",
+      "tenantId": "ten_w8frutgg6",
+      "role": "assistant",
+      "content": "Olá! Tudo ótimo por aqui, e com você? ✨ \n\nSeja muito bem-vindo(a) à **Google User Demo**! Eu sou a sua assistente virtual. 🌿\n\nNós somos uma clínica de estética especializada em **tricologia**, ou seja, somos focados em cuidar da saúde, beleza e recuperação do seu cabelo e couro cabeludo! \n\nComo posso te ajudar hoje? Você gostaria de conhecer nossos tratamentos ou agendar uma avaliação para cuidarmos de você? 😊👇",
+      "createdAt": "2026-07-06T14:57:09.340Z"
+    },
+    {
+      "id": "msg_9hj8w7hy9",
+      "convId": "conv_sssik7len",
+      "tenantId": "ten_w8frutgg6",
+      "role": "user",
+      "content": "Olá! Quero tirar uma dúvida sobre os prazos.",
+      "createdAt": "2026-07-06T15:02:25.887Z"
+    },
+    {
+      "id": "msg_m4cn8z7bi",
+      "convId": "conv_sssik7len",
+      "tenantId": "ten_w8frutgg6",
+      "role": "assistant",
+      "content": "Olá! ✨🌿 Que alegria ter você por aqui na Google User Demo!\n\nClaro, posso te ajudar com isso com toda certeza. Quando você fala em prazos, você gostaria de saber mais sobre:\n\n1️⃣ O tempo de duração de cada sessão ou do tratamento de tricologia (saúde capilar)?\n2️⃣ O prazo médio para começar a ver os primeiros resultados no seu cabelo ou couro cabeludo?\n3️⃣ Ou seria sobre os prazos e horários disponíveis para agendamento de uma consulta?\n\nMe conta um pouquinho mais para que eu possa te dar a resposta bem certinha! 😊👇",
+      "createdAt": "2026-07-06T15:02:41.731Z"
+    }
+  ]
+}

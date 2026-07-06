@@ -1,0 +1,6 @@
+{
+  "name": "CA.RO Connect",
+  "description": "SaaS multi-tenant WhatsApp & Instagram AI Agent integration platform featuring self-service auth, interactive 3-step onboarding, simulated Stripe billing, and a real-time conversational dashboard powered by Gemini.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

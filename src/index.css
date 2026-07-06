@@ -1,0 +1,495 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap');
+@import "tailwindcss";
+
+:root {
+  /* Default: Branco & Verde WhatsApp (Modo Claro) */
+  --color-primary: #25D366; /* Vibrant lime WhatsApp Green */
+  --color-primary-hover: #1ebd56;
+  --color-primary-light: #f4f6f5; /* Light grey panel background */
+  --color-primary-border: #e1e8e5; /* Delicate border line */
+  --color-bg-main: #ffffff; /* Crisp white body background */
+  --color-panel-bg: #f4f6f5; /* Beautiful soft light panel background */
+  --color-panel-border: rgba(0, 0, 0, 0.08); /* Clean thin line separators */
+  --color-text-main: #111b21; /* High contrast deep grey-black for flawless readability */
+  --color-text-muted: #54656f; /* Muted slate for subtitle/secondary descriptions */
+  --color-sidebar-bg: #f4f6f5;
+  --color-card-bg: #ffffff;
+  --color-accent: #25D366; /* Bright vibrant green accents */
+  --color-accent-light: rgba(37, 211, 102, 0.08);
+  --shadow-color: rgba(37, 211, 102, 0.08);
+}
+
+/* Theme 1: Branco & Verde WhatsApp (Modo Claro) */
+.theme-sand-gold {
+  --color-primary: #25D366; /* Vibrant lime WhatsApp Green */
+  --color-primary-hover: #1ebd56;
+  --color-primary-light: #f4f6f5; /* Light grey panel background */
+  --color-primary-border: #e1e8e5; /* Delicate border line */
+  --color-bg-main: #ffffff; /* Crisp white body background */
+  --color-panel-bg: #f4f6f5; /* Beautiful soft light panel background */
+  --color-panel-border: rgba(0, 0, 0, 0.08); /* Clean thin line separators */
+  --color-text-main: #111b21; /* High contrast deep grey-black for flawless readability */
+  --color-text-muted: #54656f; /* Muted slate for subtitle/secondary descriptions */
+  --color-sidebar-bg: #f4f6f5;
+  --color-card-bg: #ffffff;
+  --color-accent: #25D366; /* Bright vibrant green accents */
+  --color-accent-light: rgba(37, 211, 102, 0.08);
+  --shadow-color: rgba(37, 211, 102, 0.08);
+}
+
+/* All dark themes have been removed as requested. The system runs exclusively on a refined, high-contrast light mode template (theme-sand-gold) featuring WhatsApp bright green accents and crisp white surfaces. */
+
+@theme {
+  --font-sans: "Plus Jakarta Sans", "Inter", system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+  --font-serif: "Playfair Display", Georgia, serif;
+  
+  /* Retheming emerald (the main app color) to adapt dynamically using CSS custom properties! */
+  --color-emerald-50: var(--color-primary-light);
+  --color-emerald-100: var(--color-primary-light);
+  --color-emerald-200: var(--color-primary-border);
+  --color-emerald-300: var(--color-accent);
+  --color-emerald-400: var(--color-accent);
+  --color-emerald-500: var(--color-primary);
+  --color-emerald-600: var(--color-primary);
+  --color-emerald-700: var(--color-primary-hover);
+  --color-emerald-800: var(--color-primary-hover);
+  --color-emerald-900: var(--color-text-main);
+  --color-emerald-950: var(--color-text-main);
+
+  /* Mapping premium theme styles dynamically */
+  --color-brand-primary: var(--color-primary);
+  --color-brand-primary-hover: var(--color-primary-hover);
+  --color-brand-primary-light: var(--color-primary-light);
+  --color-brand-primary-border: var(--color-primary-border);
+  --color-brand-bg: var(--color-bg-main);
+  --color-brand-panel: var(--color-panel-bg);
+  --color-brand-border: var(--color-panel-border);
+  --color-brand-text: var(--color-text-main);
+  --color-brand-text-muted: var(--color-text-muted);
+  --color-brand-sidebar: var(--color-sidebar-bg);
+  --color-brand-card: var(--color-card-bg);
+  --color-brand-accent: var(--color-accent);
+  --color-brand-accent-light: var(--color-accent-light);
+
+  /* CA.RO Connect Premium Palette */
+  --color-luxury-blue: var(--color-bg-main);
+  --color-luxury-blue-dark: var(--color-panel-bg);
+  --color-luxury-blue-light: var(--color-primary-light);
+  --color-luxury-black: var(--color-card-bg);
+  --color-luxury-gold: var(--color-primary);
+  --color-luxury-gold-light: var(--color-accent);
+  --color-luxury-offwhite: var(--color-text-main);
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-bg-main);
+  color: var(--color-text-main);
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Specific adaptations for Light Theme (Branco & Verde WhatsApp) */
+.theme-sand-gold {
+  /* High contrast text overrides - converts originally light/white text to rich dark slate */
+  h1, h2, h3, h4, h5, h6,
+  span, p, div, label, li, a, th, td,
+  .text-white,
+  .text-slate-50,
+  .text-slate-100,
+  .text-slate-200,
+  .text-slate-300,
+  .text-slate-400,
+  .text-gray-100,
+  .text-gray-200,
+  .text-gray-300,
+  .text-zinc-100,
+  .text-zinc-200,
+  .text-zinc-300,
+  .text-brand-text {
+    color: var(--color-text-main) !important;
+  }
+
+  /* Secondary, muted details */
+  .text-slate-500,
+  .text-slate-600,
+  .text-gray-400,
+  .text-gray-500,
+  .text-zinc-400,
+  .text-zinc-500,
+  .text-brand-text-muted {
+    color: var(--color-text-muted) !important;
+  }
+
+  /* Bright brand accents */
+  .text-luxury-gold,
+  .text-luxury-gold-light,
+  .text-amber-500,
+  .text-emerald-400,
+  .text-[#25D366],
+  .text-emerald-500 {
+    color: var(--color-primary) !important;
+  }
+
+  /* Primary action buttons: Keep dark slate text on bright lime-green background for flawless contrast and readability */
+  button.bg-luxury-gold,
+  button.bg-emerald-600,
+  button.bg-brand-primary,
+  a.bg-luxury-gold,
+  a.bg-emerald-600,
+  #btn-nav-cta,
+  #btn-hero-cta {
+    background-color: var(--color-primary) !important;
+    border-color: var(--color-primary) !important;
+    color: #111b21 !important;
+    box-shadow: 0 4px 14px rgba(37, 211, 102, 0.2) !important;
+    
+    &, & *, & p, & span, & div {
+      color: #111b21 !important;
+      font-weight: 800 !important;
+    }
+
+    &:hover {
+      background-color: var(--color-primary-hover) !important;
+    }
+  }
+
+  /* Ensure buttons with dark backgrounds have crisp white text */
+  button.bg-slate-900,
+  button.bg-slate-950,
+  button.bg-blue-600,
+  button.bg-indigo-600,
+  button.bg-[#1877F2],
+  button.bg-[#111b21],
+  button.bg-red-600,
+  button[class*="bg-slate-"],
+  button[class*="bg-blue-"],
+  button[class*="bg-indigo-"],
+  button[class*="bg-emerald-"] {
+    color: #ffffff !important;
+    &, & *, & p, & span, & div {
+      color: #ffffff !important;
+    }
+  }
+
+  /* Containers & Panels: Dark colors in markup map to clean off-whites */
+  .bg-luxury-black/40,
+  .bg-black/40,
+  .bg-white/5,
+  .bg-white/10,
+  .bg-luxury-black,
+  .bg-luxury-blue-dark/90,
+  .bg-luxury-blue-dark/60,
+  .bg-luxury-blue-dark,
+  .bg-luxury-blue-dark/95,
+  .bg-luxury-blue-dark/50,
+  .bg-emerald-950/20,
+  .bg-yellow-950/20,
+  .bg-[#0b141a],
+  .bg-[#111b21] {
+    background-color: var(--color-panel-bg) !important;
+    border-color: var(--color-panel-border) !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02) !important;
+  }
+
+  /* Clean white cards and main sheets */
+  .bg-brand-card,
+  .bg-luxury-black,
+  .bg-white {
+    background-color: #ffffff !important;
+    border-color: var(--color-panel-border) !important;
+  }
+
+  /* Form Inputs and selects */
+  input, textarea, select {
+    background-color: #ffffff !important;
+    border: 1px solid var(--color-primary-border) !important;
+    color: var(--color-text-main) !important;
+    
+    &:focus {
+      border-color: var(--color-primary) !important;
+      box-shadow: 0 0 0 2px var(--color-accent-light) !important;
+    }
+  }
+
+  /* Header sticky background inside Light mode */
+  nav#navbar, .sticky {
+    background-color: rgba(255, 255, 255, 0.9) !important;
+    border-color: var(--color-panel-border) !important;
+  }
+}
+
+/* ==========================================================================
+   FORCED LIGHT THEME WITH WHATSAPP GREEN FOR LANDING PAGE
+   (Enforces a clean white, high-contrast aesthetic with WhatsApp green accents,
+    entirely independent of whichever global theme is active inside the app)
+   ========================================================================== */
+#landing-page {
+  --color-primary: #25D366; /* WhatsApp classic bright lime green (meio limão) */
+  --color-primary-hover: #1ebd56;
+  --color-primary-light: #f4f6f5; /* Clean light panel background */
+  --color-primary-border: #e1e8e5; /* Soft border */
+  --color-bg-main: #ffffff; /* Crisp white background */
+  --color-panel-bg: #f4f6f5;
+  --color-panel-border: rgba(0, 0, 0, 0.08);
+  --color-text-main: #111b21; /* Rich grey-black for flawless reading */
+  --color-text-muted: #54656f; /* Muted slate for descriptions */
+  --color-sidebar-bg: #f4f6f5;
+  --color-card-bg: #ffffff;
+  --color-accent: #25D366; /* Vibrant WhatsApp light green */
+  --color-accent-light: rgba(37, 211, 102, 0.08);
+  --shadow-color: rgba(37, 211, 102, 0.08);
+
+  background-color: #ffffff !important;
+  color: #111b21 !important;
+
+  /* Force light background on the landing page wrapper */
+  &, section, header, footer, div, nav {
+    background-color: transparent;
+  }
+
+  /* Force background color on main landing wrapper */
+  &.bg-luxury-blue {
+    background-color: #ffffff !important;
+  }
+
+  /* Force clean off-white background on panels, cards and list wraps */
+  .bg-luxury-blue-dark/80,
+  .bg-luxury-blue-dark/90,
+  .bg-luxury-blue-dark/60,
+  .bg-luxury-blue-dark/50,
+  .bg-luxury-blue-dark/95,
+  .bg-luxury-blue-dark,
+  .bg-black/60,
+  .bg-black/40,
+  .bg-white/5,
+  .bg-white/10,
+  .bg-luxury-black/40,
+  .bg-luxury-black {
+    background-color: #f4f6f5 !important;
+    border-color: rgba(0, 0, 0, 0.08) !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02) !important;
+  }
+
+  /* Specifically force pure white background inside plan cards or resource containers */
+  .border-luxury-gold/60,
+  .border-slate-800 {
+    background-color: #ffffff !important;
+    border-color: #e1e8e5 !important;
+  }
+
+  /* Navigation bar sticky styling */
+  nav#navbar {
+    background-color: rgba(255, 255, 255, 0.95) !important;
+    border-color: rgba(0, 0, 0, 0.08) !important;
+    backdrop-filter: blur(12px) !important;
+  }
+
+  /* Text color corrections to rich dark slate (#111b21) for maximum legibility */
+  h1, h2, h3, h4, h5, h6,
+  span, p, div, label, li, a, th, td,
+  .text-white,
+  .text-slate-50,
+  .text-slate-100,
+  .text-slate-200,
+  .text-slate-300,
+  .text-slate-400,
+  .text-gray-100,
+  .text-gray-200,
+  .text-gray-300,
+  .text-zinc-100,
+  .text-zinc-200,
+  .text-zinc-300,
+  .text-brand-text {
+    color: #111b21 !important;
+  }
+
+  /* Secondary, muted details */
+  .text-slate-500,
+  .text-slate-600,
+  .text-gray-400,
+  .text-gray-500,
+  .text-zinc-400,
+  .text-zinc-500,
+  .text-brand-text-muted {
+    color: #54656f !important;
+  }
+
+  /* Highlights & Highlights text overrides to elegant WhatsApp Green */
+  .text-luxury-gold,
+  .text-luxury-gold-light,
+  .text-amber-500,
+  .text-emerald-400,
+  .text-emerald-500,
+  .text-\[\#25D366\] {
+    color: #25D366 !important;
+  }
+
+  /* Glow accents */
+  .bg-luxury-gold/5,
+  .bg-luxury-blue-light/30 {
+    background-color: rgba(37, 211, 102, 0.04) !important;
+  }
+
+  /* Icons inside details */
+  svg.text-luxury-gold,
+  svg.text-emerald-400,
+  svg.text-\[\#25D366\] {
+    color: #25D366 !important;
+    stroke: #25D366 !important;
+  }
+
+  /* Buttons & CTA styling inside Landing Page */
+  button, a {
+    /* Primary buttons (e.g. Criar Conta, Começar) */
+    &.bg-luxury-gold,
+    &#btn-nav-cta,
+    &#btn-hero-cta,
+    .bg-brand-primary {
+      background-color: #25D366 !important;
+      border: 1px solid #25D366 !important;
+      box-shadow: 0 4px 14px rgba(37, 211, 102, 0.2) !important;
+      
+      &, & *, & p, & span, & div {
+        color: #111b21 !important; /* Elegant dark text on brand lime-green buttons */
+        font-weight: 800 !important;
+      }
+      
+      &:hover {
+        background-color: #1ebd56 !important;
+        border-color: #1ebd56 !important;
+      }
+    }
+
+    /* Secondary / Login buttons */
+    &#btn-nav-login,
+    &.bg-white/5,
+    &.bg-white/10 {
+      background-color: #f4f6f5 !important;
+      border: 1px solid #e1e8e5 !important;
+      
+      &, & *, & p, & span, & div {
+        color: #111b21 !important;
+        font-weight: 600 !important;
+      }
+      
+      &:hover {
+        background-color: #e1e8e5 !important;
+      }
+    }
+  }
+
+  /* Plan and Card Borders */
+  .border-white\/5,
+  .border-white\/10 {
+    border-color: #e1e8e5 !important;
+  }
+
+  /* FAQ Accordion background when closed vs open */
+  .bg-slate-900\/40,
+  .bg-slate-900\/20 {
+    background-color: #f4f6f5 !important;
+    border-color: #e1e8e5 !important;
+  }
+}
+
+/* Specific adaptations for Dark Theme (Preto & Verde WhatsApp) */
+.theme-midnight-velvet {
+  /* High contrast text overrides - light text on dark background */
+  h1, h2, h3, h4, h5, h6,
+  .text-white,
+  .text-slate-100,
+  .text-slate-200 {
+    color: var(--color-text-main) !important;
+  }
+
+  p,
+  .text-slate-300,
+  .text-slate-400,
+  .text-slate-500 {
+    color: var(--color-text-muted) !important;
+  }
+
+  /* Primary brand buttons: Deep dark text on vibrant green background */
+  button.bg-luxury-gold,
+  button.bg-emerald-600,
+  button.bg-brand-primary,
+  a.bg-luxury-gold,
+  a.bg-emerald-600,
+  #btn-nav-cta,
+  #btn-hero-cta {
+    background-color: var(--color-primary) !important;
+    border: 1px solid var(--color-primary-border) !important;
+    box-shadow: 0 4px 14px var(--shadow-color) !important;
+    
+    &, & *, & p, & span, & div {
+      color: #0b141a !important; /* Elegant black text on green buttons */
+      font-weight: 700 !important;
+    }
+    
+    &:hover {
+      background-color: var(--color-primary-hover) !important;
+    }
+  }
+
+  /* Secondary style buttons */
+  .bg-white/5,
+  .bg-white/10,
+  .bg-slate-50,
+  .border-white/10 {
+    background-color: var(--color-primary-light) !important;
+    border: 1px solid var(--color-panel-border) !important;
+    
+    &, & *, & p, & span, & div {
+      color: var(--color-text-main) !important;
+    }
+    
+    &:hover {
+      background-color: var(--color-primary-border) !important;
+    }
+  }
+
+  /* Inputs, textareas and options */
+  input, textarea, select {
+    background-color: var(--color-primary-light) !important;
+    border-color: var(--color-panel-border) !important;
+    color: var(--color-text-main) !important;
+  }
+}
+
+/* Glassmorphism utility for modern UI cards styled with custom brand tones */
+.glass-panel {
+  background: var(--color-card-bg);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--color-panel-border);
+}
+
+/* Soft elegant glow shadows matching the active theme shadow */
+.premium-shadow-sm {
+  box-shadow: 0 2px 8px var(--shadow-color);
+}
+
+.premium-shadow-md {
+  box-shadow: 0 10px 30px -10px var(--shadow-color), 0 1px 3px rgba(0, 0, 0, 0.01);
+}
+
+.premium-shadow-lg {
+  box-shadow: 0 20px 40px -15px var(--shadow-color), 0 1px 10px rgba(0, 0, 0, 0.02);
+}
+
+/* Scrollbar customizations */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-primary-border);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-accent);
+}
