@@ -10,6 +10,10 @@ export const createPool = () => {
     password: process.env.SQL_PASSWORD || process.env.SQL_ADMIN_PASSWORD,
     database: process.env.SQL_DB_NAME,
     connectionTimeoutMillis: 15000,
+    // Neon (and most managed Postgres providers) require SSL with a valid CA
+    // certificate. Set SQL_SSL=true when pointing at Neon; Cloud SQL
+    // connections are unaffected unless this is explicitly enabled.
+    ssl: process.env.SQL_SSL === 'true' ? true : undefined,
   });
 };
 
