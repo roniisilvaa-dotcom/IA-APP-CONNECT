@@ -2334,24 +2334,37 @@ Assistente:`;
     });
   });
 
-  // Vite middleware for asset serving in development
-  if (process.env.NODE_ENV !== "production") {
-    const vite = await createViteServer({
-      server: { middlewareMode: true },
-      appType: "spa",
-    });
-    app.use(vite.middlewares);
-  } else {
-    const distPath = path.join(process.cwd(), "dist");
-    app.use(express.static(distPath));
-    app.get("*", (req, res) => {
-      res.sendFile(path.join(distPath, "index.html"));
-    });
+    // On Vercel, static assets are served by the platform itself from the Vite
+             // build output, and this Express app only handles /api/* as a serverless
+             // function. Skip the local dev/Cloud Run bootstrap (vite middleware, static
+             // serving, and app.listen) in that environment.
+             if (!process.env.VERCEL) {
+                   if (process.env.NODE_ENV !== "production") {
+                           const vite = await createViteServer({
+                                     server: { middlewareMode: true },
+                                     appType: "spa",
+                           });
+                           app.use(vite.middlewares);
+                   } else {
+                           const distPath = path.join(process.cwd(), "dist");
+                           app.use(express.static(distPath));
+                           app.get("*", (req, res) => {
+                                     res.sendFile(path.join(distPath, "index.html"));
+                           });
+                   }
+
+        app.listen(PORT, "0.0.0.0", () => {
+                console.log(`[CA.RO Connect] Full-Stack server running on port ${PORT}`);
+        });
+             }
+
+             return app;
   }
 
-  app.listen(PORT, "0.0.0.0", () => {
-    console.log(`[CA.RO Connect] Full-Stack server running on port ${PORT}`);
-  });
-}
+           const appPromise = startServer();
 
-startServer();
+export default async function handler(req: any, res: any) {
+    const app = await appPromise;
+    return (app as any)(req, res);
+}
+  
