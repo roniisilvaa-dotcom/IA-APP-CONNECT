@@ -29,19 +29,19 @@ const DB_PATH = path.join(process.cwd(), "db.json");
 
 // Helper to write to local DB
 function getDb() {
-  if (!fs.existsSync(DB_PATH)) {
-    const defaultData = seedDatabase();
-    fs.writeFileSync(DB_PATH, JSON.stringify(defaultData, null, 2));
-    return defaultData;
-  }
-  try {
-    const data = fs.readFileSync(DB_PATH, "utf8");
-    return JSON.parse(data);
-  } catch (e) {
-    const defaultData = seedDatabase();
-    fs.writeFileSync(DB_PATH, JSON.stringify(defaultData, null, 2));
-    return defaultData;
-  }
+    if (!fs.existsSync(DB_PATH)) {
+          const defaultData = seedDatabase();
+          try { fs.writeFileSync(DB_PATH, JSON.stringify(defaultData, null, 2)); } catch (fsErr) { console.error("[Local DB Fallback] Falha ao gravar db.json (fs somente leitura em producao, ignorando):", fsErr); }
+          return defaultData;
+    }
+    try {
+          const data = fs.readFileSync(DB_PATH, "utf8");
+          return JSON.parse(data);
+    } catch (e) {
+          const defaultData = seedDatabase();
+          try { fs.writeFileSync(DB_PATH, JSON.stringify(defaultData, null, 2)); } catch (fsErr) { console.error("[Local DB Fallback] Falha ao gravar db.json (fs somente leitura em producao, ignorando):", fsErr); }
+          return defaultData;
+    }
 }
 
 function saveDb(data: any) {
