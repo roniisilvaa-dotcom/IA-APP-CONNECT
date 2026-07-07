@@ -2216,6 +2216,7 @@ Assistente:`;
     let senderName = "";
     let messageText = "";
     let channelType = "whatsapp_meta"; // default
+    let phoneNumberId: string | undefined;
 
     try {
       if (body.object === "whatsapp_business_account") {
@@ -2230,6 +2231,7 @@ Assistente:`;
           senderId = message.from || "";
           senderName = contact?.profile?.name || senderId;
           messageText = message.text?.body || "";
+          phoneNumberId = value?.metadata?.phone_number_id;
         }
       } else if (body.object === "instagram" || body.entry?.[0]?.messaging) {
         channelType = "instagram";
@@ -2256,6 +2258,24 @@ Assistente:`;
 
       // Resolve tenantId
       let resolvedTenantId = tenantId as string;
+      if (!resolvedTenantId && phoneNumberId) {
+        if (isSqlEnabled) {
+          const ownerChannel = await sqlDb.select().from(channelsTable).where(
+            and(eq(channelsTable.type, "whatsapp_meta"), eq(channelsTable.phoneNumberId, phoneNumberId))
+            ).limit(1);
+          if (ownerChannel.length > 0) {
+            resolvedTenantId = ownerChannel[0].tenantId;
+          }
+        } else {
+          const localDb = getDb();
+          const ownerChannel = (localDb.channels || []).find(
+            (c: any) => c.type === "whatsapp_meta" && c.phoneNumberId === phoneNumberId
+              );
+          if (ownerChannel) {
+            resolvedTenantId = ownerChannel.tenantId;
+          }
+        }
+      }
       if (!resolvedTenantId) {
         if (isSqlEnabled) {
           const tenantsList = await sqlDb.select().from(tenantsTable).limit(1);
