@@ -636,7 +636,7 @@ async function startServer() {
     db.tenants.push(newTenant);
     db.users.push(newUser);
     db.agentConfigs.push(newAgentConfig);
-    saveDb(db);
+    try { saveDb(db); } catch (fsErr) { console.error("[Local DB Fallback] Falha ao gravar db.json (fs somente leitura em producao, ignorando):", fsErr); }
 
     res.json({
       user: { id: newUser.id, email: newUser.email, name: newUser.name, tenantId },
@@ -696,7 +696,7 @@ async function startServer() {
         passwordValid = foundUser.password === password;
         if (passwordValid) {
           foundUser.password = await bcrypt.hash(password, 10);
-          saveDb(db);
+          try { saveDb(db); } catch (fsErr) { console.error("[Local DB Fallback] Falha ao gravar db.json (fs somente leitura em producao, ignorando):", fsErr); }
         }
       }
     }
