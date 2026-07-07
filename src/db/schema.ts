@@ -48,6 +48,7 @@ export const agentConfigs = pgTable('agent_configs', {
   aiEnabled: boolean('ai_enabled').default(true).notNull(),
   systemPrompt: text('system_prompt'),
   knowledgeBase: text('knowledge_base'),
+  instagramTriggers: text('instagram_triggers'), // JSON: {onDmEnabled, onDmWelcomeMsg, onCommentEnabled, onCommentKeywords, onCommentReplyText, onCommentDmText}
 });
 
 // 5. Knowledge Docs table
