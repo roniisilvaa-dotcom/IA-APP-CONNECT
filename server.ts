@@ -563,7 +563,7 @@ async function startServer() {
           name,
           slug,
           plan: plan || "starter",
-          status: plan === "enterprise" ? "pending_payment" : "active",
+                  status: "pending_payment", // requires payment confirmation before dashboard access
           ownerEmail: email.toLowerCase(),
         };
 
@@ -612,7 +612,7 @@ async function startServer() {
       name,
       slug,
       plan: plan || "starter",
-      status: plan === "enterprise" ? "pending_payment" : "active",
+            status: "pending_payment", // requires payment confirmation before dashboard access
       owner_email: email.toLowerCase(),
       createdAt: new Date().toISOString(),
     };
@@ -712,6 +712,32 @@ async function startServer() {
       tenant,
     });
   });
+
+    // Middleware: block access to /api/tenant/* routes unless the tenant's subscription is active
+    async function requireActiveTenant(req: any, res: any, next: any) {
+          const tenantId = (req.query && req.query.tenantId) || (req.body && req.body.tenantId);
+          if (!tenantId) {
+                  return next();
+          }
+          try {
+                  let tenantRecord: any = null;
+                  if (isSqlEnabled) {
+                            const found = await sqlDb.select().from(tenantsTable).where(eq(tenantsTable.id, tenantId)).limit(1);
+                            tenantRecord = found[0] || null;
+                  } else {
+                            const db = getDb();
+                            tenantRecord = db.tenants.find((t: any) => t.id === tenantId) || null;
+                  }
+                  if (tenantRecord && tenantRecord.status !== "active") {
+                            return res.status(402).json({ error: "Pagamento pendente. Conclua o pagamento para acessar o painel.", status: tenantRecord.status });
+                  }
+                  return next();
+          } catch (err) {
+                  console.error("[requireActiveTenant]", err);
+                  return next();
+          }
+    }
+    app.use("/api/tenant", requireActiveTenant);
 
   // 2. TENANT & ONBOARDING ENDPOINTS
   app.post("/api/tenant/onboard", async (req, res) => {
