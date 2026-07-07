@@ -2132,62 +2132,79 @@ Assistente:`;
     }
   });
 
-  // Sends the AI-generated reply back to the client via Meta Graph API (WhatsApp Cloud API / Instagram Messaging)
-  async function sendMetaReply(channelType: string, recipientId: string, message: string) {
-    const accessToken = process.env.META_ACCESS_TOKEN;
-    if (!accessToken) {
-      console.warn("[Meta Send] META_ACCESS_TOKEN nao configurado. Pulando envio real.");
-      return;
+  // Sends the AI-generated reply back to the client via Meta Graph API (WhatsApp Cloud API / Instagram Messaging).
+    // Uses the tenant's OWN connected access token/phone number when available (per-tenant OAuth connection),
+    // falling back to the shared global credentials only when the tenant has no connection of its own.
+    async function sendMetaReply(channelType: string, recipientId: string, message: string, tenantId?: string) {
+          let accessToken = process.env.META_ACCESS_TOKEN;
+          let phoneNumberId = process.env.META_PHONE_NUMBER_ID;
+
+          if (tenantId) {
+                  try {
+                            const conn = await getTenantMetaConnection(tenantId);
+                            if (conn && conn.accessToken) {
+                                        accessToken = conn.accessToken;
+                                        if (conn.phoneNumberId) {
+                                                      phoneNumberId = conn.phoneNumberId;
+                                        }
+                            }
+                  } catch (connErr) {
+                            console.error("[Meta Send] Erro ao buscar conexao do tenant, usando credenciais globais:", connErr);
+                  }
+          }
+
+          if (!accessToken) {
+                  console.warn("[Meta Send] Nenhum access token disponivel (nem do tenant nem global). Pulando envio real.");
+                  return;
+          }
+          try {
+                  if (channelType === "whatsapp_meta") {
+                            if (!phoneNumberId) {
+                                        console.warn("[Meta Send] Nenhum phoneNumberId disponivel (nem do tenant nem global). Pulando envio real do WhatsApp.");
+                                        return;
+                            }
+                            const resp = await fetch(`https://graph.facebook.com/v21.0/${phoneNumberId}/messages`, {
+                                        method: "POST",
+                                        headers: {
+                                                      "Authorization": `Bearer ${accessToken}`,
+                                                      "Content-Type": "application/json",
+                                        },
+                                        body: JSON.stringify({
+                                                      messaging_product: "whatsapp",
+                                                      to: recipientId,
+                                                      type: "text",
+                                                      text: { body: message },
+                                        }),
+                            });
+                            const data = await resp.json();
+                            if (!resp.ok) {
+                                        console.error("[Meta Send] Falha ao enviar mensagem WhatsApp:", data);
+                            } else {
+                                        console.log("[Meta Send] Mensagem WhatsApp enviada com sucesso.");
+                            }
+                  } else if (channelType === "instagram") {
+                            const resp = await fetch(`https://graph.facebook.com/v21.0/me/messages`, {
+                                        method: "POST",
+                                        headers: {
+                                                      "Authorization": `Bearer ${accessToken}`,
+                                                      "Content-Type": "application/json",
+                                        },
+                                        body: JSON.stringify({
+                                                      recipient: { id: recipientId },
+                                                      message: { text: message },
+                                        }),
+                            });
+                            const data = await resp.json();
+                            if (!resp.ok) {
+                                        console.error("[Meta Send] Falha ao enviar mensagem Instagram:", data);
+                            } else {
+                                        console.log("[Meta Send] Mensagem Instagram enviada com sucesso.");
+                            }
+                  }
+          } catch (sendErr) {
+                  console.error("[Meta Send] Erro ao enviar mensagem via Graph API:", sendErr);
+          }
     }
-    try {
-      if (channelType === "whatsapp_meta") {
-        const phoneNumberId = process.env.META_PHONE_NUMBER_ID;
-        if (!phoneNumberId) {
-          console.warn("[Meta Send] META_PHONE_NUMBER_ID nao configurado. Pulando envio real do WhatsApp.");
-          return;
-        }
-        const resp = await fetch(`https://graph.facebook.com/v21.0/${phoneNumberId}/messages`, {
-          method: "POST",
-          headers: {
-            "Authorization": `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            messaging_product: "whatsapp",
-            to: recipientId,
-            type: "text",
-            text: { body: message },
-          }),
-        });
-        const data = await resp.json();
-        if (!resp.ok) {
-          console.error("[Meta Send] Falha ao enviar mensagem WhatsApp:", data);
-        } else {
-          console.log("[Meta Send] Mensagem WhatsApp enviada com sucesso.");
-        }
-      } else if (channelType === "instagram") {
-        const resp = await fetch(`https://graph.facebook.com/v21.0/me/messages`, {
-          method: "POST",
-          headers: {
-            "Authorization": `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            recipient: { id: recipientId },
-            message: { text: message },
-          }),
-        });
-        const data = await resp.json();
-        if (!resp.ok) {
-          console.error("[Meta Send] Falha ao enviar mensagem Instagram:", data);
-        } else {
-          console.log("[Meta Send] Mensagem Instagram enviada com sucesso.");
-        }
-      }
-    } catch (sendErr) {
-      console.error("[Meta Send] Erro ao enviar mensagem via Graph API:", sendErr);
-    }
-  }
   // Meta Webhook Receiver (POST)
   app.post("/api/webhooks/meta", async (req, res) => {
     const { tenantId } = req.query; // Multi-tenant Webhook URL format: /api/webhooks/meta?tenantId=...
@@ -2447,7 +2464,7 @@ Assistente:`;
           }
 
           console.log("[Meta Webhook] Successfully generated and saved AI response:", aiReplyText);
-          await sendMetaReply(channelType, senderId, aiReplyText);
+          await sendMetaReply(channelType, senderId, aiReplyText, resolvedTenantId);
         } catch (innerErr) {
           console.error("[Meta Webhook] Failed to generate automated response", innerErr);
         }
