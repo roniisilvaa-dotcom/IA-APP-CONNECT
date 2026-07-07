@@ -1914,6 +1914,205 @@ Assistente:`;
     res.json({ success: true });
   });
 
+  // 7.5 META OAUTH CONNECT FLOW (Facebook Login for Business - per-tenant real connection)
+    const META_APP_ID = process.env.META_APP_ID;
+    const META_APP_SECRET = process.env.META_APP_SECRET;
+    const META_OAUTH_REDIRECT_URI = process.env.META_OAUTH_REDIRECT_URI || "https://iaconnect.carostudio.com.br/api/meta/oauth/callback";
+  
+    async function getTenantMetaConnection(tenantId: string) {
+          try {
+                  if (isSqlEnabled) {
+                            const rows = await sqlDb.select().from(channelsTable).where(
+                                        and(eq(channelsTable.tenantId, tenantId), eq(channelsTable.type, "whatsapp_meta"))
+                                      );
+                            if (rows.length > 0) return rows[0];
+                  }
+          } catch (err) {
+                  console.error("[Meta OAuth] Erro ao buscar conexao do tenant:", err);
+          }
+          return null;
+    }
+  
+    // Starts the official Meta OAuth flow: redirects the tenant's browser to Facebook's login dialog
+    app.get("/api/meta/oauth/start", (req, res) => {
+          const { tenantId } = req.query;
+          if (!tenantId || typeof tenantId !== "string") {
+                  return res.status(400).send("Tenant ID e obrigatorio");
+          }
+          if (!META_APP_ID) {
+                  return res.status(500).send("Integracao Meta nao configurada (META_APP_ID ausente). Contate o suporte.");
+          }
+          const scope = [
+                  "whatsapp_business_management",
+                  "whatsapp_business_messaging",
+                  "instagram_basic",
+                  "instagram_manage_messages",
+                  "pages_show_list",
+                  "pages_manage_metadata",
+                  "business_management",
+                ].join(",");
+          const authUrl = `https://www.facebook.com/v21.0/dialog/oauth?client_id=${META_APP_ID}&redirect_uri=${encodeURIComponent(META_OAUTH_REDIRECT_URI)}&state=${encodeURIComponent(tenantId)}&scope=${encodeURIComponent(scope)}&response_type=code`;
+          res.redirect(authUrl);
+    });
+  
+    // Handles Facebook's redirect back with an auth code, exchanges it for tokens,
+    // discovers the tenant's WhatsApp phone number and Instagram account, and saves them.
+    app.get("/api/meta/oauth/callback", async (req, res) => {
+          const { code, state, error: oauthError } = req.query;
+          const tenantId = typeof state === "string" ? state : "";
+      
+          if (oauthError) {
+                  console.warn("[Meta OAuth] Usuario cancelou ou negou permissoes:", oauthError);
+                  return res.redirect(`/?meta_connect=cancelled`);
+          }
+          if (!code || typeof code !== "string" || !tenantId) {
+                  return res.status(400).send("Parametros invalidos no retorno do Facebook.");
+          }
+          if (!META_APP_ID || !META_APP_SECRET) {
+                  return res.status(500).send("Integracao Meta nao configurada no servidor (META_APP_SECRET ausente).");
+          }
+      
+          try {
+                  const tokenResp = await fetch(
+                            `https://graph.facebook.com/v21.0/oauth/access_token?client_id=${META_APP_ID}&redirect_uri=${encodeURIComponent(META_OAUTH_REDIRECT_URI)}&client_secret=${META_APP_SECRET}&code=${code}`
+                          );
+                  const tokenData = await tokenResp.json();
+                  if (!tokenResp.ok || !tokenData.access_token) {
+                            console.error("[Meta OAuth] Falha ao trocar code por token:", tokenData);
+                            return res.redirect(`/?meta_connect=error`);
+                  }
+            
+                  const longLivedResp = await fetch(
+                            `https://graph.facebook.com/v21.0/oauth/access_token?grant_type=fb_exchange_token&client_id=${META_APP_ID}&client_secret=${META_APP_SECRET}&fb_exchange_token=${tokenData.access_token}`
+                          );
+                  const longLivedData = await longLivedResp.json();
+                  const accessToken = longLivedData.access_token || tokenData.access_token;
+                  const expiresInSec = longLivedData.expires_in || tokenData.expires_in;
+                  const tokenExpiresAt = expiresInSec ? new Date(Date.now() + expiresInSec * 1000) : null;
+            
+                  let phoneNumberId: string | null = null;
+                  let wabaId: string | null = null;
+                  let whatsappDisplayNumber: string | null = null;
+                  try {
+                            const bizResp = await fetch(`https://graph.facebook.com/v21.0/me/businesses?access_token=${accessToken}`);
+                            const bizData = await bizResp.json();
+                            const businessId = bizData?.data?.[0]?.id;
+                            if (businessId) {
+                                        const wabaResp = await fetch(`https://graph.facebook.com/v21.0/${businessId}/owned_whatsapp_business_accounts?access_token=${accessToken}`);
+                                        const wabaData = await wabaResp.json();
+                                        wabaId = wabaData?.data?.[0]?.id || null;
+                                        if (wabaId) {
+                                                      const phoneResp = await fetch(`https://graph.facebook.com/v21.0/${wabaId}/phone_numbers?access_token=${accessToken}`);
+                                                      const phoneData = await phoneResp.json();
+                                                      phoneNumberId = phoneData?.data?.[0]?.id || null;
+                                                      whatsappDisplayNumber = phoneData?.data?.[0]?.display_phone_number || null;
+                                        }
+                            }
+                  } catch (waErr) {
+                            console.error("[Meta OAuth] Erro ao descobrir WhatsApp Business Account:", waErr);
+                  }
+            
+                  let pageId: string | null = null;
+                  let igAccountId: string | null = null;
+                  let igUsername: string | null = null;
+                  try {
+                            const pagesResp = await fetch(`https://graph.facebook.com/v21.0/me/accounts?access_token=${accessToken}`);
+                            const pagesData = await pagesResp.json();
+                            const page = pagesData?.data?.[0];
+                            pageId = page?.id || null;
+                            if (pageId) {
+                                        const igResp = await fetch(`https://graph.facebook.com/v21.0/${pageId}?fields=instagram_business_account&access_token=${accessToken}`);
+                                        const igData = await igResp.json();
+                                        igAccountId = igData?.instagram_business_account?.id || null;
+                                        if (igAccountId) {
+                                                      const igUserResp = await fetch(`https://graph.facebook.com/v21.0/${igAccountId}?fields=username&access_token=${accessToken}`);
+                                                      const igUserData = await igUserResp.json();
+                                                      igUsername = igUserData?.username || null;
+                                        }
+                            }
+                  } catch (igErr) {
+                            console.error("[Meta OAuth] Erro ao descobrir conta do Instagram:", igErr);
+                  }
+            
+                  if (isSqlEnabled) {
+                            const existing = await getTenantMetaConnection(tenantId);
+                            const record = {
+                                        tenantId,
+                                        type: "whatsapp_meta",
+                                        identifier: JSON.stringify({ whatsapp: whatsappDisplayNumber, instagram: igUsername }),
+                                        status: "connected",
+                                        accessToken,
+                                        phoneNumberId,
+                                        wabaId,
+                                        pageId,
+                                        igAccountId,
+                                        tokenExpiresAt,
+                            };
+                            if (existing) {
+                                        await sqlDb.update(channelsTable).set(record).where(eq(channelsTable.id, existing.id));
+                            } else {
+                                        await sqlDb.insert(channelsTable).values({ id: `ch_${Math.random().toString(36).substring(2, 11)}`, ...record });
+                            }
+                  }
+            
+                  return res.redirect(`/?meta_connect=success`);
+          } catch (err) {
+                  console.error("[Meta OAuth] Erro inesperado no callback:", err);
+                  return res.redirect(`/?meta_connect=error`);
+          }
+    });
+  
+    // Returns the tenant's current Meta connection status (for the frontend polling widget)
+    app.get("/api/meta/status", async (req, res) => {
+          const { tenantId } = req.query;
+          if (!tenantId || typeof tenantId !== "string") {
+                  return res.status(400).json({ connected: false });
+          }
+          const conn = await getTenantMetaConnection(tenantId);
+          if (!conn || !conn.accessToken) {
+                  return res.json({ connected: false });
+          }
+          let parsedIdentifier: any = {};
+          try {
+                  parsedIdentifier = JSON.parse(conn.identifier || "{}");
+          } catch (parseErr) {
+                  parsedIdentifier = {};
+          }
+          return res.json({
+                  connected: true,
+                  whatsapp: parsedIdentifier.whatsapp || (conn.phoneNumberId ? "Numero conectado" : undefined),
+                  instagram: parsedIdentifier.instagram || undefined,
+                  connectedAt: conn.tokenExpiresAt ? new Date(conn.tokenExpiresAt).toLocaleDateString("pt-BR") : new Date().toLocaleDateString("pt-BR"),
+          });
+    });
+  
+    // Disconnects the tenant's Meta integration (clears stored tokens)
+    app.post("/api/meta/disconnect", async (req, res) => {
+          const { tenantId } = req.body;
+          if (!tenantId) {
+                  return res.status(400).json({ error: "Tenant ID e obrigatorio" });
+          }
+          try {
+                  if (isSqlEnabled) {
+                            const conn = await getTenantMetaConnection(tenantId);
+                            if (conn) {
+                                        await sqlDb.update(channelsTable).set({
+                                                      status: "disconnected",
+                                                      accessToken: null,
+                                                      phoneNumberId: null,
+                                                      wabaId: null,
+                                                      pageId: null,
+                                                      igAccountId: null,
+                                                      tokenExpiresAt: null,
+                                        }).where(eq(channelsTable.id, conn.id));
+                            }
+                  }
+          } catch (err) {
+                  console.error("[Meta OAuth] Erro ao desconectar:", err);
+          }
+          res.json({ success: true });
+    });
+  
   // 8. META PLATFORM OFFICIAL WEBHOOKS (WhatsApp Cloud API & Instagram Graph API)
   // Meta Webhook Verification (GET)
   app.get("/api/webhooks/meta", (req, res) => {
