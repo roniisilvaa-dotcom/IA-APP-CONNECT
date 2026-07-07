@@ -19,6 +19,7 @@ import {
   Settings,
   X,
   Globe,
+  Menu,
   Users
 } from "lucide-react";
 
@@ -49,6 +50,7 @@ export default function Dashboard({ user, tenant, onLogout, onUpdateTenant, curr
     activeChannels: 0,
   });
   const [statsLoading, setStatsLoading] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   const fetchStats = async () => {
     setStatsLoading(true);
@@ -79,6 +81,7 @@ export default function Dashboard({ user, tenant, onLogout, onUpdateTenant, curr
       <header className="sticky top-0 bg-brand-card border-b border-brand-border z-40 shrink-0 transition-colors duration-300 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
+            <button onClick={() => setSidebarCollapsed(!sidebarCollapsed)} className="p-2 rounded-lg hover:bg-brand-primary-light text-brand-text-muted hover:text-brand-primary transition-colors cursor-pointer" title={sidebarCollapsed ? "Mostrar menu" : "Esconder menu"}><Menu className="w-4.5 h-4.5" /></button>
             <div className="w-9 h-9 bg-brand-primary rounded-xl flex items-center justify-center text-white font-black text-xl shadow-md transition-all duration-300">
               CA
             </div>
@@ -136,7 +139,7 @@ export default function Dashboard({ user, tenant, onLogout, onUpdateTenant, curr
       <div className="flex-1 flex flex-col md:flex-row max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 gap-8 items-stretch">
         
         {/* SIDE NAVIGATION (3 cols wide on md) */}
-        <aside className="md:w-64 shrink-0 flex flex-col gap-2">
+        {!sidebarCollapsed && <aside className="md:w-64 shrink-0 flex flex-col gap-2">
           
           <button
             id="nav-overview"
@@ -251,7 +254,7 @@ export default function Dashboard({ user, tenant, onLogout, onUpdateTenant, curr
             <p className="text-[10px] opacity-75 mt-1 leading-relaxed">CA.RO responderá dúvidas usando os PDFs carregados. Altere seu System Prompt a qualquer momento.</p>
           </div>
 
-        </aside>
+        </aside>}
 
         {/* MAIN DISPLAY WORKSPACE (9 cols wide) */}
         <main className="flex-1 min-w-0 bg-brand-card border border-brand-border rounded-3xl p-6 sm:p-8 flex flex-col justify-between shadow-sm relative overflow-hidden transition-colors duration-300">
