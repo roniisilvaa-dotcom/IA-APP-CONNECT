@@ -4,6 +4,7 @@ import fs from "fs";
 import { createServer as createViteServer } from "vite";
 import { GoogleGenAI } from "@google/genai";
 import dotenv from "dotenv";
+import bcrypt from "bcryptjs";
 import Stripe from "stripe";
 
 import { db as sqlDb } from "./src/db/index.ts";
@@ -555,6 +556,7 @@ async function startServer() {
         const tenantId = `ten_${Math.random().toString(36).substring(2, 11)}`;
         const userId = `usr_${Math.random().toString(36).substring(2, 11)}`;
         const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)+/g, "");
+        const hashedPassword = await bcrypt.hash(password, 10);
 
         const newTenant = {
           id: tenantId,
@@ -569,7 +571,7 @@ async function startServer() {
           id: userId,
           email: email.toLowerCase(),
           name,
-          password,
+            password: hashedPassword,
           tenantId,
         };
 
@@ -614,12 +616,12 @@ async function startServer() {
       owner_email: email.toLowerCase(),
       createdAt: new Date().toISOString(),
     };
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = {
       id: userId,
       email: email.toLowerCase(),
-      name,
-      password,
+      password: hashedPassword,
       tenantId,
     };
 
@@ -651,13 +653,24 @@ async function startServer() {
     try {
       if (isSqlEnabled) {
         const foundUsers = await sqlDb.select().from(usersTable).where(
-          and(
-            eq(usersTable.email, email.toLowerCase()),
-            eq(usersTable.password, password)
-          )
-        ).limit(1);
+          eq(usersTable.email, email.toLowerCase())
+          ).limit(1);
 
-        if (foundUsers.length > 0) {
+        const candidateUser = foundUsers[0];
+        let passwordValid = false;
+        if (candidateUser) {
+          if (candidateUser.password && candidateUser.password.startsWith("$2")) {
+            passwordValid = await bcrypt.compare(password, candidateUser.password);
+          } else {
+            passwordValid = candidateUser password;
+            if (passwordValid) {
+              const rehashed = await bcrypt.hash(password, 10);
+              await sqlDb.update(usersTable).set({ password: rehashed }).where(eq(usersTable.id, candidateUser.id));
+            }
+          }
+        }
+
+        if (candidateUser && passwordValid) {
           const user = foundUsers[0];
           const foundTenants = await sqlDb.select().from(tenantsTable).where(eq(tenantsTable.id, user.tenantId || "")).limit(1);
           const tenant = foundTenants[0] || null;
@@ -674,10 +687,23 @@ async function startServer() {
 
     // Fallback
     const db = getDb();
-    const user = db.users.find((u: any) => u.email.toLowerCase() === email.toLowerCase() && u.password === password);
-    if (!user) {
+    const foundUser = db.users.find((u: any) => u.email.toLowerCase() === email.toLowerCase());
+    let passwordValid = false;
+    if (foundUser) {
+      if (foundUser.password && foundUser.password.startsWith("$2")) {
+        passwordValid = await bcrypt.compare(password, foundUser.password);
+      } else {
+        passwordValid = foundUser password;
+        if (passwordValid) {
+          foundUser.password = await bcrypt.hash(password, 10);
+          saveDb(db);
+        }
+      }
+    }
+    if (!foundUser || !passwordValid) {
       return res.status(401).json({ error: "Credenciais inválidas" });
     }
+    const user = foundUser;
 
     const tenant = db.tenants.find((t: any) => t.id === user.tenantId);
 
@@ -2549,12 +2575,13 @@ Assistente:`;
           businessDescription: description || "",
         });
 
+        const hashedPassword = await bcrypt.hash(password, 10);
         // Insert new user
         await sqlDb.insert(usersTable).values({
           id: userId,
           email: email.toLowerCase(),
           name,
-          password,
+          password: hashedPassword,
           tenantId,
         });
 
