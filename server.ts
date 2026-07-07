@@ -2607,6 +2607,45 @@ Assistente:`;
     });
   });
 
+  // Manually attach a specific, already-known Meta WABA/phone number to a tenant.
+  // Used when the number was configured directly in Meta Business Manager (outside the
+  // generic OAuth auto-discovery flow), avoiding ambiguity when a Business Manager
+  // owns more than one WABA/phone number.
+  app.post("/api/admin/link-meta-channel", async (req, res) => {
+    const { tenantId, phoneNumberId, wabaId, pageId, igAccountId } = req.body;
+    if (!tenantId || !phoneNumberId) {
+      return res.status(400).json({ error: "tenantId e phoneNumberId sao obrigatorios" });
+    }
+    const accessToken = process.env.META_ACCESS_TOKEN;
+    if (!accessToken) {
+      return res.status(400).json({ error: "META_ACCESS_TOKEN nao configurado no servidor" });
+    }
+    try {
+      if (isSqlEnabled) {
+        await sqlDb.delete(channelsTable).where(
+          and(eq(channelsTable.tenantId, tenantId), eq(channelsTable.type, "whatsapp_meta"))
+          );
+        await sqlDb.insert(channelsTable).values({
+          id: `ch_${Math.random().toString(36).substring(2, 11)}`,
+          tenantId,
+          type: "whatsapp_meta",
+          identifier: phoneNumberId,
+          status: "connected",
+          accessToken,
+          phoneNumberId,
+          wabaId: wabaId || null,
+          pageId: pageId || null,
+          igAccountId: igAccountId || null,
+        });
+        return res.json({ success: true });
+      }
+    } catch (err) {
+      console.error("[Admin Link Meta Channel Error]", err);
+      return res.status(500).json({ error: "Erro ao vincular canal" });
+    }
+    return res.status(400).json({ error: "SQL nao habilitado neste ambiente" });
+  });
+
     // On Vercel, static assets are served by the platform itself from the Vite
              // build output, and this Express app only handles /api/* as a serverless
              // function. Skip the local dev/Cloud Run bootstrap (vite middleware, static
