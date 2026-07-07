@@ -1,29 +1,16 @@
-import { drizzle } from 'drizzle-orm/node-postgres';
-import { Pool } from 'pg';
+import { drizzle } from 'drizzle-orm/neon-http';
+import { neon } from '@neondatabase/serverless';
 import * as schema from './schema.ts';
 
-// Function to create a new connection pool.
-export const createPool = () => {
-  return new Pool({
-    host: process.env.SQL_HOST,
-    user: process.env.SQL_USER || process.env.SQL_ADMIN_USER,
-    password: process.env.SQL_PASSWORD || process.env.SQL_ADMIN_PASSWORD,
-    database: process.env.SQL_DB_NAME,
-    connectionTimeoutMillis: 15000,
-    // Neon (and most managed Postgres providers) require SSL with a valid CA
-    // certificate. Set SQL_SSL=true when pointing at Neon; Cloud SQL
-    // connections are unaffected unless this is explicitly enabled.
-    ssl: process.env.SQL_SSL === 'true' ? true : undefined,
-  });
-};
+// Neon serverless HTTP driver: each query is a single stateless HTTP call,
+// so it never hangs waiting on a TCP pool connection to a suspended compute.
+const SQL_HOST = process.env.SQL_HOST;
+const SQL_USER = process.env.SQL_USER || process.env.SQL_ADMIN_USER;
+const SQL_PASSWORD = process.env.SQL_PASSWORD || process.env.SQL_ADMIN_PASSWORD;
+const SQL_DB_NAME = process.env.SQL_DB_NAME;
 
-// Create a pool instance.
-const pool = createPool();
+const connectionString = "postgresql://" + SQL_USER + ":" + SQL_PASSWORD + "@" + SQL_HOST + "/" + SQL_DB_NAME + "?sslmode=require";
 
-// Prevent unhandled pool-level errors from crashing the application
-pool.on('error', (err) => {
-  console.error('Unexpected error on idle SQL pool client:', err);
-});
+const sql = neon(connectionString);
 
-// Initialize Drizzle with the pool and schema.
-export const db = drizzle(pool, { schema });
+export const db = drizzle(sql, { schema });
