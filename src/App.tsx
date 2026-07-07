@@ -4,6 +4,7 @@ import LandingPage from "./components/LandingPage";
 import AuthScreen from "./components/AuthScreen";
 import OnboardingFlow from "./components/OnboardingFlow";
 import Dashboard from "./components/Dashboard";
+import StripeCheckoutModal from "./components/StripeCheckoutModal";
 
 export default function App() {
   const [user, setUser] = useState<any>(null);
@@ -74,7 +75,13 @@ export default function App() {
 
     // If logged in, check if onboarding has been completed
     if (user && tenant) {
-      const isOnboardingCompleted = tenant.businessSegment && tenant.businessDescription;
+      if (tenant.status && tenant.status !== 'active') {
+        return (
+          <motion.div key="payment-required" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }} className="min-h-screen">
+          <StripeCheckoutModal tenant={tenant} plan={tenant.plan || selectedPlan} onClose={handleLogout} onPaymentSuccess={handleUpdateTenant} /></motion.div>
+          );
+      }
+const isOnboardingCompleted = tenant.businessSegment && tenant.businessDescription;
 
       if (!isOnboardingCompleted) {
         return (
