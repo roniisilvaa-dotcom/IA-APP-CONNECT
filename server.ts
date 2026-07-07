@@ -891,6 +891,7 @@ async function startServer() {
             aiEnabled: config.aiEnabled,
             systemPrompt: config.systemPrompt,
             knowledgeBase: config.knowledgeBase,
+            instagramTriggers: config.instagramTriggers,
           });
         } else {
           // Auto create
@@ -927,7 +928,7 @@ async function startServer() {
   });
 
   app.post("/api/tenant/agent-config", async (req, res) => {
-    const { tenantId, agentName, aiEnabled, systemPrompt } = req.body;
+        const { tenantId, agentName, aiEnabled, systemPrompt, instagramTriggers } = req.body;
     if (!tenantId) {
       return res.status(400).json({ error: "Tenant ID é obrigatório" });
     }
@@ -940,6 +941,7 @@ async function startServer() {
             agentName,
             aiEnabled,
             systemPrompt,
+            instagramTriggers: typeof instagramTriggers === "string" ? instagramTriggers : JSON.stringify(instagramTriggers || {}),
           }).where(eq(agentConfigsTable.tenantId, tenantId));
         } else {
           await sqlDb.insert(agentConfigsTable).values({
@@ -948,6 +950,7 @@ async function startServer() {
             agentName,
             aiEnabled,
             systemPrompt,
+            instagramTriggers: typeof instagramTriggers === "string" ? instagramTriggers : JSON.stringify(instagramTriggers || {}),
           });
         }
         return res.json({ success: true });
@@ -963,6 +966,7 @@ async function startServer() {
       db.agentConfigs[index].agentName = agentName;
       db.agentConfigs[index].aiEnabled = aiEnabled;
       db.agentConfigs[index].systemPrompt = systemPrompt;
+      db.agentConfigs[index].instagramTriggers = typeof instagramTriggers === "string" ? instagramTriggers : JSON.stringify(instagramTriggers || {});
     } else {
       db.agentConfigs.push({
         id: `ag_${Math.random().toString(36).substring(2, 11)}`,
@@ -970,6 +974,7 @@ async function startServer() {
         agentName,
         aiEnabled,
         systemPrompt,
+        instagramTriggers: typeof instagramTriggers === "string" ? instagramTriggers : JSON.stringify(instagramTriggers || {}),
       });
     }
     saveDb(db);
