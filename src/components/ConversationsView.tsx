@@ -347,7 +347,7 @@ export default function ConversationsView({ tenant }: ConversationsViewProps) {
         </div>
 
         {/* Conversation records */}
-        <div className="flex-1 overflow-y-auto space-y-1 p-2">
+        <div className="flex-1 min-h-0 overflow-y-auto space-y-1 p-2">
           {loading ? (
             <div className="flex items-center justify-center py-16">
               <Loader2 className="w-8 h-8 text-[#25D366] animate-spin" />
@@ -428,7 +428,7 @@ export default function ConversationsView({ tenant }: ConversationsViewProps) {
       </div>
 
       {/* 2. MIDDLE PANEL: Active Chat Thread (6 cols on desktop) */}
-      <div className={`lg:col-span-6 flex flex-col h-full bg-[#efeae2] border-r border-slate-200 relative`}>
+      <div className={`lg:col-span-6 flex flex-col h-full min-h-0 bg-[#efeae2] border-r border-slate-200 relative`}>
         
         {selectedConv ? (
           <>
@@ -474,7 +474,7 @@ export default function ConversationsView({ tenant }: ConversationsViewProps) {
 
             {/* Conversation Messages viewport with background styling */}
             <div 
-              className="flex-1 p-4 overflow-y-auto space-y-3 scrollbar-thin"
+              className="flex-1 min-h-0 p-4 overflow-y-auto space-y-3 scrollbar-thin"
               style={{
                 backgroundColor: channel === 'whatsapp_meta' ? '#efeae2' : '#ffffff',
                 backgroundImage: channel === 'whatsapp_meta' ? 'radial-gradient(#dfdcd6 1px, transparent 1px)' : 'none',
@@ -577,7 +577,7 @@ export default function ConversationsView({ tenant }: ConversationsViewProps) {
       </div>
 
       {/* 3. RIGHT PANEL: Contact profile details (3 cols on desktop) */}
-      <div className="lg:col-span-3 border-l border-slate-200 flex flex-col h-full bg-white overflow-y-auto">
+      <div className="lg:col-span-3 border-l border-slate-200 flex flex-col h-full min-h-0 bg-white overflow-y-auto">
         {selectedConv ? (
           <div className="p-5 flex flex-col h-full">
             
