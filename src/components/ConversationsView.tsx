@@ -284,7 +284,7 @@ export default function ConversationsView({ tenant }: ConversationsViewProps) {
   };
 
   return (
-    <div id="conversations-module" className="grid grid-cols-1 lg:grid-cols-12 border border-slate-200 rounded-3xl overflow-hidden bg-white shadow-xl h-[700px] font-sans">
+    <div id="conversations-module" className="grid grid-cols-1 lg:grid-cols-12 border border-slate-200 rounded-3xl overflow-hidden bg-white shadow-xl h-[calc(100vh-180px)] min-h-[600px] font-sans">
       
       {/* 1. LEFT PANEL: Chat list (3 cols on desktop) */}
       <div className="lg:col-span-3 border-r border-slate-200 flex flex-col h-full bg-slate-50">
