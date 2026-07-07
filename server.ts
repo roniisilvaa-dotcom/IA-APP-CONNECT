@@ -2654,6 +2654,32 @@ Assistente:`;
     });
   });
 
+    // Admin: Cascade-delete a tenant and all associated data (used to remove demo/test tenants)
+    app.delete("/api/admin/tenants/:tenantId", async (req, res) => {
+          const { tenantId } = req.params;
+          if (!tenantId) return res.status(400).json({ error: "tenantId e obrigatorio" });
+          try {
+                  if (isSqlEnabled) {
+                            await sqlDb.delete(messagesTable).where(eq(messagesTable.tenantId, tenantId));
+                            await sqlDb.delete(conversationsTable).where(eq(conversationsTable.tenantId, tenantId));
+                            await sqlDb.delete(knowledgeDocsTable).where(eq(knowledgeDocsTable.tenantId, tenantId));
+                            await sqlDb.delete(channelsTable).where(eq(channelsTable.tenantId, tenantId));
+                            await sqlDb.delete(agentConfigsTable).where(eq(agentConfigsTable.tenantId, tenantId));
+                            await sqlDb.delete(usersTable).where(eq(usersTable.tenantId, tenantId));
+                            await sqlDb.delete(tenantsTable).where(eq(tenantsTable.id, tenantId));
+                            return res.json({ success: true });
+                  }
+                  const db = getDb();
+                  db.tenants = db.tenants.filter((t: any) => t.id !== tenantId);
+                  db.users = db.users.filter((u: any) => u.tenantId !== tenantId);
+                  saveDb(db);
+                  return res.json({ success: true });
+          } catch (err) {
+                  console.error("[Admin Delete Tenant Error]", err);
+                  return res.status(500).json({ error: "Erro ao remover tenant" });
+          }
+    });
+
   // Manually attach a specific, already-known Meta WABA/phone number to a tenant.
   // Used when the number was configured directly in Meta Business Manager (outside the
   // generic OAuth auto-discovery flow), avoiding ambiguity when a Business Manager
