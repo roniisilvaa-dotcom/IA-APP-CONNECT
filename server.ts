@@ -662,7 +662,7 @@ async function startServer() {
           if (candidateUser.password && candidateUser.password.startsWith("$2")) {
             passwordValid = await bcrypt.compare(password, candidateUser.password);
           } else {
-            passwordValid = candidateUser password;
+            passwordValid = candidateUser.password === password;
             if (passwordValid) {
               const rehashed = await bcrypt.hash(password, 10);
               await sqlDb.update(usersTable).set({ password: rehashed }).where(eq(usersTable.id, candidateUser.id));
@@ -693,7 +693,7 @@ async function startServer() {
       if (foundUser.password && foundUser.password.startsWith("$2")) {
         passwordValid = await bcrypt.compare(password, foundUser.password);
       } else {
-        passwordValid = foundUser password;
+        passwordValid = foundUser.password === password;
         if (passwordValid) {
           foundUser.password = await bcrypt.hash(password, 10);
           saveDb(db);
