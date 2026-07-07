@@ -31,6 +31,13 @@ export const channels = pgTable('channels', {
   type: text('type').notNull(), // 'whatsapp_meta' | 'instagram'
   identifier: text('identifier').notNull(),
   status: text('status'), // 'connected' | etc.
+  // Real Meta Graph API connection data (per-tenant OAuth connection)
+  accessToken: text('access_token'), // long-lived user/page access token
+  phoneNumberId: text('phone_number_id'), // WhatsApp Cloud API phone number id
+  wabaId: text('waba_id'), // WhatsApp Business Account id
+  pageId: text('page_id'), // Facebook Page id (used for Instagram messaging)
+  igAccountId: text('ig_account_id'), // Instagram Business Account id
+  tokenExpiresAt: timestamp('token_expires_at'),
 });
 
 // 4. Agent Configurations table
