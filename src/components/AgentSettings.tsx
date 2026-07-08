@@ -508,8 +508,8 @@ export default function AgentSettings({ tenant }: AgentSettingsProps) {
               </div>
 
               {/* INSTAGRAM SETTINGS */}
-              {platformTab === 'instagram' && (
-                <div className="space-y-6 animate-fadeIn">
+              
+                <div className={`space-y-6 animate-fadeIn ${platformTab === 'instagram' ? '' : 'hidden'}`}>
                   
                   {/* TRIGGER 1: FOLLOW */}
                   <div className="space-y-2 border-b border-slate-50 pb-5">
@@ -614,7 +614,7 @@ export default function AgentSettings({ tenant }: AgentSettingsProps) {
                             2. Mensagem enviada no Direct (Privado)
                           </label>
                           <textarea
-                            rows={3}
+                            rows={5}
                             value={triggers.instagram.onCommentDmText}
                             onChange={(e) => setTriggers({
                               ...triggers,
@@ -628,11 +628,11 @@ export default function AgentSettings({ tenant }: AgentSettingsProps) {
                   </div>
 
                 </div>
-              )}
+              
 
               {/* WHATSAPP SETTINGS */}
-              {platformTab === 'whatsapp' && (
-                <div className="space-y-6 animate-fadeIn">
+              
+                <div className={`space-y-6 animate-fadeIn ${platformTab === 'whatsapp' ? '' : 'hidden'}`}>
                   
                   {/* TRIGGER 1: FIRST MSG WELCOME */}
                   <div className="space-y-2 border-b border-slate-50 pb-5">
@@ -790,11 +790,11 @@ export default function AgentSettings({ tenant }: AgentSettingsProps) {
                           ))}
                         </div>
                       </div>
-                    )}
+)}          
                   </div>
 
                 </div>
-              )}
+              
 
               {/* SAVE BUTTON FOR PLATFORM TRIGGERS */}
               <div className="pt-4 border-t border-slate-100 flex justify-end">
@@ -825,8 +825,8 @@ export default function AgentSettings({ tenant }: AgentSettingsProps) {
                 </p>
               </div>
 
-              {platformTab === 'instagram' ? (
-                <div className="space-y-3">
+              
+                <div className={`space-y-3 ${platformTab === 'instagram' ? '' : 'hidden'}`}>
                   <span className="text-[9px] text-slate-500 font-bold uppercase tracking-wider block">Gatilhos do Instagram</span>
                   
                   <button
@@ -856,8 +856,8 @@ export default function AgentSettings({ tenant }: AgentSettingsProps) {
                     Simular Mensagem Direta
                   </button>
                 </div>
-              ) : (
-                <div className="space-y-3">
+              
+                <div className={`space-y-3 ${platformTab === 'whatsapp' ? '' : 'hidden'}`}>
                   <span className="text-[9px] text-slate-500 font-bold uppercase tracking-wider block">Gatilhos do WhatsApp</span>
                   
                   <button
@@ -878,7 +878,7 @@ export default function AgentSettings({ tenant }: AgentSettingsProps) {
                     Simular Contato Fora de Horário
                   </button>
                 </div>
-              )}
+              
 
               {simulating && (
                 <div className="flex items-center justify-center gap-2 text-[10px] text-slate-400 animate-pulse">
