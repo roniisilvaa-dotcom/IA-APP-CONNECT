@@ -790,11 +790,11 @@ export default function AgentSettings({ tenant }: AgentSettingsProps) {
                           ))}
                         </div>
                       </div>
-          
+)}          
                   </div>
 
                 </div>
-              )}
+              
 
               {/* SAVE BUTTON FOR PLATFORM TRIGGERS */}
               <div className="pt-4 border-t border-slate-100 flex justify-end">
