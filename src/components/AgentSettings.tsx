@@ -825,8 +825,8 @@ export default function AgentSettings({ tenant }: AgentSettingsProps) {
                 </p>
               </div>
 
-              {platformTab === 'instagram' ? (
-                <div className="space-y-3">
+              
+                <div className={`space-y-3 ${platformTab === 'instagram' ? '' : 'hidden'}`}>
                   <span className="text-[9px] text-slate-500 font-bold uppercase tracking-wider block">Gatilhos do Instagram</span>
                   
                   <button
@@ -856,8 +856,8 @@ export default function AgentSettings({ tenant }: AgentSettingsProps) {
                     Simular Mensagem Direta
                   </button>
                 </div>
-              ) : (
-                <div className="space-y-3">
+              
+                <div className={`space-y-3 ${platformTab === 'whatsapp' ? '' : 'hidden'}`}>
                   <span className="text-[9px] text-slate-500 font-bold uppercase tracking-wider block">Gatilhos do WhatsApp</span>
                   
                   <button
@@ -878,7 +878,7 @@ export default function AgentSettings({ tenant }: AgentSettingsProps) {
                     Simular Contato Fora de Horário
                   </button>
                 </div>
-              )}
+              
 
               {simulating && (
                 <div className="flex items-center justify-center gap-2 text-[10px] text-slate-400 animate-pulse">
