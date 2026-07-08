@@ -508,8 +508,8 @@ export default function AgentSettings({ tenant }: AgentSettingsProps) {
               </div>
 
               {/* INSTAGRAM SETTINGS */}
-              {platformTab === 'instagram' && (
-                <div className="space-y-6 animate-fadeIn">
+              
+                <div className={`space-y-6 animate-fadeIn ${platformTab === 'instagram' ? '' : 'hidden'}`}>
                   
                   {/* TRIGGER 1: FOLLOW */}
                   <div className="space-y-2 border-b border-slate-50 pb-5">
@@ -614,7 +614,7 @@ export default function AgentSettings({ tenant }: AgentSettingsProps) {
                             2. Mensagem enviada no Direct (Privado)
                           </label>
                           <textarea
-                            rows={3}
+                            rows={5}
                             value={triggers.instagram.onCommentDmText}
                             onChange={(e) => setTriggers({
                               ...triggers,
@@ -628,11 +628,11 @@ export default function AgentSettings({ tenant }: AgentSettingsProps) {
                   </div>
 
                 </div>
-              )}
+              }
 
               {/* WHATSAPP SETTINGS */}
-              {platformTab === 'whatsapp' && (
-                <div className="space-y-6 animate-fadeIn">
+              
+                <div className={`space-y-6 animate-fadeIn ${platformTab === 'whatsapp' ? '' : 'hidden'}`}>
                   
                   {/* TRIGGER 1: FIRST MSG WELCOME */}
                   <div className="space-y-2 border-b border-slate-50 pb-5">
@@ -790,7 +790,7 @@ export default function AgentSettings({ tenant }: AgentSettingsProps) {
                           ))}
                         </div>
                       </div>
-                    )}
+          }
                   </div>
 
                 </div>
