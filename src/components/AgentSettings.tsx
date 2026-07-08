@@ -628,7 +628,7 @@ export default function AgentSettings({ tenant }: AgentSettingsProps) {
                   </div>
 
                 </div>
-              }
+              
 
               {/* WHATSAPP SETTINGS */}
               
@@ -790,7 +790,7 @@ export default function AgentSettings({ tenant }: AgentSettingsProps) {
                           ))}
                         </div>
                       </div>
-          }
+          
                   </div>
 
                 </div>
