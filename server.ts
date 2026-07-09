@@ -2356,7 +2356,8 @@ accessTokenPreview: accessToken ? accessToken.slice(0, 10) + "..." : null,
       }
 
       if (!senderId || !messageText) {
-        return res.status(400).json({ error: "No messages or sender found in payload" });
+                console.log("[Webhook Meta] Evento sem texto de mensagem (provavelmente confirmacao de status/leitura ou tipo de midia nao suportado). Confirmando recebimento sem processar. Corpo resumido:", JSON.stringify(body).slice(0, 800));
+                return res.status(200).json({ received: true });
       }
 
       // Resolve tenantId
