@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Conectar WhatsApp - CA.RO Connect</title>
+<style>
+body { font-family: Helvetica, Arial, sans-serif; background: #0e0e10; color: #f2f2f2; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; padding: 24px; text-align: center; }
+.card { background: #17171a; border-radius: 12px; padding: 32px; max-width: 480px; width: 100%; box-shadow: 0 4px 24px rgba(0,0,0,0.4); }
+h1 { font-size: 20px; margin-bottom: 8px; }
+p { color: #b3b3b3; font-size: 14px; line-height: 1.5; }
+#status { margin-top: 20px; font-size: 13px; text-align: left; white-space: pre-wrap; background: #0e0e10; border-radius: 8px; padding: 12px; max-height: 320px; overflow: auto; display: none; }
+#status.show { display: block; }
+button { margin-top: 20px; }
+</style>
+</head>
+<body>
+<div class="card">
+<h1>Conectar numero do WhatsApp</h1>
+<p>Clique no botao abaixo e siga o fluxo do Meta para conectar o numero do WhatsApp Business mantendo o uso do aplicativo no celular (Coexistencia).</p>
+<button onclick="launchWhatsAppSignup()" style="background-color: #1877f2; border: 0; border-radius: 6px; color: #fff; cursor: pointer; font-family: Helvetica, Arial, sans-serif; font-size: 16px; font-weight: bold; height: 44px; padding: 0 28px;">Conectar com o Facebook</button>
+<div id="status"></div>
+</div>
+<script async defer crossorigin="anonymous" src="https://connect.facebook.net/pt_BR/sdk.js"></script>
+<script>
+const APP_ID = "1014337884672761";
+const CONFIG_ID = "1344839601026231";
+const GRAPH_API_VERSION = "v25.0";
+
+function log(msg, obj) {
+const el = document.getElementById("status");
+el.classList.add("show");
+el.textContent += "\n" + msg + (obj ? ("\n" + JSON.stringify(obj, null, 2)) : "");
+console.log(msg, obj || "");
+}
+
+window.fbAsyncInit = function () {
+FB.init({
+appId: APP_ID,
+autoLogAppEvents: true,
+xfbml: true,
+version: GRAPH_API_VERSION,
+});
+log("SDK do Facebook carregado.");
+};
+
+window.addEventListener("message", (event) => {
+if (!event.origin.endsWith("facebook.com")) return;
+try {
+const data = JSON.parse(event.data);
+if (data.type === "WA_EMBEDDED_SIGNUP") {
+log("Evento de sessao recebido:", data);
+if (data.event === "FINISH_WHATSAPP_BUSINESS_APP_ONBOARDING" || data.event === "FINISH") {
+window.__esWabaId = data.data && data.data.waba_id;
+window.__esPhoneNumberId = data.data && data.data.phone_number_id;
+log("WABA ID capturado: " + window.__esWabaId);
+log("Phone Number ID capturado: " + (window.__esPhoneNumberId || "(nao retornado - numero ja registrado via Coexistencia)"));
+}
+if (data.event === "CANCEL") {
+log("Fluxo cancelado/abandonado na tela: " + (data.data && data.data.current_step));
+}
+}
+} catch (e) {
+log("Evento de sessao (raw):", event.data);
+}
+});
+
+const fbLoginCallback = (response) => {
+if (response.authResponse) {
+const code = response.authResponse.code;
+log("Codigo de autorizacao recebido. Trocando por token no servidor...");
+fetch("/api/meta/embedded-signup-callback", {
+method: "POST",
+headers: { "Content-Type": "application/json" },
+body: JSON.stringify({ code: code, wabaId: window.__esWabaId, phoneNumberId: window.__esPhoneNumberId }),
+})
+.then((r) => r.json())
+.then((data) => {
+log("Resposta do servidor:", data);
+})
+.catch((err) => log("Erro ao chamar o backend:", String(err)));
+} else {
+log("Login nao concluido / resposta sem authResponse:", response);
+}
+};
+
+const launchWhatsAppSignup = () => {
+FB.login(fbLoginCallback, {
+config_id: CONFIG_ID,
+response_type: "code",
+override_default_response_type: true,
+extras: {
+setup: {},
+featureType: "whatsapp_business_app_onboarding",
+sessionInfoVersion: "3",
+},
+});
+};
+</script>
+</body>
+</html>

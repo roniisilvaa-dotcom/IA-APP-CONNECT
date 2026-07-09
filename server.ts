@@ -2184,6 +2184,57 @@ Assistente:`;
     }
   });
 
+    // EMBEDDED SIGNUP (Coexistencia) - troca o code por access token
+      // e assina o app na WABA do cliente.
+        app.post("/api/meta/embedded-signup-callback", async (req, res) => {
+        const { code, wabaId, phoneNumberId } = req.body;
+        if (!code) return res.status(400).json({ error: "missing_code" });
+
+        const appId = process.env.META_APP_ID || "1014337884672761";
+        const appSecret = process.env.META_APP_SECRET;
+        if (!appSecret) {
+        console.error("[Embedded Signup] META_APP_SECRET nao configurado");
+        return res.status(500).json({ error: "app_secret_not_configured" });
+        }
+
+        try {
+        const tokenUrl = `https://graph.facebook.com/v25.0/oauth/access_token?client_id=${appId}&client_secret=${appSecret}&code=${code}`;
+        const tokenRes = await fetch(tokenUrl);
+        const tokenData: any = await tokenRes.json();
+
+        if (!tokenRes.ok || !tokenData.access_token) {
+        console.error("[Embedded Signup] Falha ao trocar code por token:", tokenData);
+        return res.status(500).json({ error: "token_exchange_failed", details: tokenData });
+        }
+
+        const accessToken = tokenData.access_token;
+        let subscribed: any = null;
+
+        if (wabaId) {
+        const subUrl = `https://graph.facebook.com/v25.0/${wabaId}/subscribed_apps`;
+        const subRes = await fetch(subUrl, { method: "POST", headers: { Authorization: `Bearer ${accessToken}` } });
+        subscribed = await subRes.json();
+        console.log("[Embedded Signup] App inscrito na WABA:", wabaId, subscribed);
+        }
+
+        console.log("[Embedded Signup] SUCESSO. Copie estes valores para as variaveis de ambiente:");
+        console.log("META_PHONE_NUMBER_ID =", phoneNumberId || "(verifique no WhatsApp Manager)");
+        console.log("WABA_ID =", wabaId);
+
+        res.json({
+        success: true,
+        wabaId: wabaId || null,
+        phoneNumberId: phoneNumberId || null,
+accessTokenPreview: accessToken ? accessToken.slice(0, 10) + "..." : null,
+        subscribed,
+        });
+        } catch (err) {
+        console.error("[Embedded Signup] Erro interno:", err);
+        res.status(500).json({ error: "internal_error" });
+        }
+          });
+
+
   // Sends the AI-generated reply back to the client via Meta Graph API (WhatsApp Cloud API / Instagram Messaging).
     // Uses the tenant's OWN connected access token/phone number when available (per-tenant OAuth connection),
     // falling back to the shared global credentials only when the tenant has no connection of its own.
