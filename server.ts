@@ -2489,7 +2489,7 @@ accessTokenPreview: accessToken ? accessToken.slice(0, 10) + "..." : null,
       console.log(`[Meta Webhook] Successfully processed incoming message from ${senderName} on ${channelType}: "${messageText}"`);
 
       // AI Response Generation
-      setTimeout(async () => {
+      await (async () => {
         try {
           let agentPrompt = "Você é um assistente virtual atencioso.";
           let isAiEnabled = true;
@@ -2592,7 +2592,7 @@ Assistente:`;
         } catch (innerErr) {
           console.error("[Meta Webhook] Failed to generate automated response", innerErr);
         }
-      }, 1000);
+      })();
 
       return res.json({ success: true, message: "Webhook processed successfully", convId });
     } catch (err: any) {
