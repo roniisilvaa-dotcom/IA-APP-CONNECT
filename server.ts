@@ -2070,7 +2070,7 @@ Assistente:`;
                   try {
                             const pagesResp = await fetch(`https://graph.facebook.com/v21.0/me/accounts?access_token=${accessToken}`);
                             const pagesData = await pagesResp.json();
-                            const page = pagesData?.data?.[0];
+                            let page = pagesData?.data?.[0]; for (const p of (pagesData?.data || [])) { const chkResp = await fetch(`https://graph.facebook.com/v21.0/${p.id}?fields=instagram_business_account&access_token=${accessToken}`); const chkData = await chkResp.json(); if (chkData?.instagram_business_account?.id) { page = p; break; } }
                             pageId = page?.id || null;
                             if (pageId) {
                                         const igResp = await fetch(`https://graph.facebook.com/v21.0/${pageId}?fields=instagram_business_account&access_token=${accessToken}`);
