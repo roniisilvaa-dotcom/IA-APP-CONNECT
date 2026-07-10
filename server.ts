@@ -2047,7 +2047,7 @@ Assistente:`;
                   let whatsappDisplayNumber: string | null = null;
                   try {
                             const bizResp = await fetch(`https://graph.facebook.com/v21.0/me/businesses?access_token=${accessToken}`);
-                            const wabaData = await wabaResp.json();
+                            					const bizData = await bizResp.json();
                             const businessId = bizData?.data?.[0]?.id;
                             if (businessId) {
                                         const wabaResp = await fetch(`https://graph.facebook.com/v21.0/${businessId}/owned_whatsapp_business_accounts?access_token=${accessToken}`);
