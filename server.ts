@@ -2047,7 +2047,7 @@ Assistente:`;
                   let whatsappDisplayNumber: string | null = null;
                   try {
                             const bizResp = await fetch(`https://graph.facebook.com/v21.0/me/businesses?access_token=${accessToken}`);
-                            const bizData = await bizResp.json();
+                            					const bizData = await bizResp.json();
                             const businessId = bizData?.data?.[0]?.id;
                             if (businessId) {
                                         const wabaResp = await fetch(`https://graph.facebook.com/v21.0/${businessId}/owned_whatsapp_business_accounts?access_token=${accessToken}`);
@@ -2070,10 +2070,10 @@ Assistente:`;
                   try {
                             const pagesResp = await fetch(`https://graph.facebook.com/v21.0/me/accounts?access_token=${accessToken}`);
                             const pagesData = await pagesResp.json();
-                            let page = pagesData?.data?.[0]; for (const p of (pagesData?.data || [])) { const chkResp = await fetch(`https://graph.facebook.com/v21.0/${p.id}?fields=instagram_business_account&access_token=${accessToken}`); const chkData = await chkResp.json(); if (chkData?.instagram_business_account?.id) { page = p; break; } }
+                            let page = pagesData?.data?.[0]; for (const p of (pagesData?.data || [])) { const chkResp = await fetch(`https://graph.facebook.com/v21.0/${p.id}?fields=instagram_business_account&access_token=${p.access_token || accessToken}`); const chkData = await chkResp.json(); if (chkData?.instagram_business_account?.id) { page = p; break; } }
                             pageId = page?.id || null;
                             if (pageId) {
-                                        const igResp = await fetch(`https://graph.facebook.com/v21.0/${pageId}?fields=instagram_business_account&access_token=${accessToken}`);
+                                        const igResp = await fetch(`https://graph.facebook.com/v21.0/${pageId}?fields=instagram_business_account&access_token=${page?.access_token || accessToken}`);
                                         const igData = await igResp.json();
                                         igAccountId = igData?.instagram_business_account?.id || null;
                                         if (igAccountId) {
